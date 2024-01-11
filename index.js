@@ -86,6 +86,14 @@ async function run() {
         res.send(result)
       })
 
+    // Get add cart data
+    app.get('/addcart/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = {email:email}
+      const result = await  addCartCollection.find(query).toArray()
+      res.send(result)
+    })
+
 
     // await client.connect();
     // Send a ping to confirm a successful connection

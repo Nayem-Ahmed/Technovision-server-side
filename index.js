@@ -93,6 +93,13 @@ async function run() {
       const result = await  addCartCollection.find(query).toArray()
       res.send(result)
     })
+    // get users rool
+    app.get('/userrole/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = {email:email}
+      const result = await  usersCollection.find(query).toArray()
+      res.send(result)
+    })
 
 
     // await client.connect();

@@ -101,6 +101,13 @@ async function run() {
       res.send(result)
     })
 
+    // single products delete
+    app.delete('/products/:id', async (req, res) => {
+      const id = req.params.id
+      const findresult = await productsCollection.deleteOne({ _id: new ObjectId(id) })
+      res.send(findresult)
+    })
+
 
     // await client.connect();
     // Send a ping to confirm a successful connection

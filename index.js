@@ -107,6 +107,12 @@ async function run() {
       const findresult = await productsCollection.deleteOne({ _id: new ObjectId(id) })
       res.send(findresult)
     })
+    // single AddCart delete
+    app.delete('/addcart/:id', async (req, res) => {
+      const id = req.params.id
+      const finddelete = await addCartCollection.deleteOne({ _id: new ObjectId(id) })
+      res.send(finddelete)
+    })
 
 
     // await client.connect();

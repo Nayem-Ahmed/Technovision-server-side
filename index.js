@@ -118,6 +118,18 @@ async function run() {
       const finddelete = await addCartCollection.deleteOne({ _id: new ObjectId(id) })
       res.send(finddelete)
     })
+    // Make Admin
+    app.patch('/userrole/:id', async (req, res) => {
+      const id = req.params.id
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+         role: 'admin',
+        },
+      }
+      const result = await usersCollection.updateOne(filter, updateDoc)
+      res.send(result)
+    })
 
 
     // await client.connect();

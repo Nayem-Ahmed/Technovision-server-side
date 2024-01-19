@@ -1,12 +1,18 @@
 const express = require('express')
 const app = express()
+var jwt = require('jsonwebtoken');
+var cookieParser = require('cookie-parser')
 require('dotenv').config()
 const cors = require('cors')
 const port = process.env.PORT || 5000
 
 // middleware
-app.use(cors())
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  credentials: true,
+}))
 app.use(express.json())
+app.use(cookieParser())
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.8wqrrau.mongodb.net/?retryWrites=true&w=majority`;
@@ -27,6 +33,20 @@ async function run() {
     const productsCollection = client.db('Technovission').collection('products')
     const addCartCollection = client.db('Technovission').collection('addCart')
 
+    // JWT
+    app.post('/jwt',async(req,res)=>{
+      const user = req.body
+      console.log(user);
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN,{expiresIn:'1h'})
+      res
+      .cookie('token',token,{
+        httpOnly:true,
+        secure:false
+      })
+      .send({success:true})
+    })
+
+  
     // Save or modify user email, status in DB
     app.put('/users/:email', async (req, res) => {
       const email = req.params.email

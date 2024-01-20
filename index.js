@@ -26,6 +26,29 @@ const client = new MongoClient(uri, {
   }
 });
 
+// own middleware
+const logger = async(req,res,next)=>{
+  console.log("cokkieeeeeeeee",req.method,req.url);
+  next()
+}
+
+const verifyToken = async (req, res, next) => {
+  const token = req?.cookies?.token
+  console.log(token)
+  if (!token) {
+    return res.status(401).send({ message: 'unauthorized access' })
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    if (err) {
+      console.log(err)
+      return res.status(401).send({ message: 'unauthorized access' })
+    }
+    req.user = decoded
+    next()
+  })
+}
+
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -34,7 +57,7 @@ async function run() {
     const addCartCollection = client.db('Technovission').collection('addCart')
 
     // JWT
-    app.post('/jwt',async(req,res)=>{
+    app.post('/jwt' ,async(req,res)=>{
       const user = req.body
       console.log(user);
       const token = jwt.sign(user,process.env.ACCESS_TOKEN,{expiresIn:'1h'})
@@ -44,6 +67,12 @@ async function run() {
         secure:false
       })
       .send({success:true})
+    })
+
+    app.post('/logout',async(req,res)=>{
+      const user = req.body
+      res.clearCookie('token',{maxAge:0}).send({success:true})
+  
     })
 
   
@@ -107,7 +136,7 @@ async function run() {
     })
 
     // Get add cart data
-    app.get('/addcart/:email', async (req, res) => {
+    app.get('/addcart/:email', logger, async (req, res) => {
       const email = req.params.email;
       const query = { email: email }
       const result = await addCartCollection.find(query).toArray()

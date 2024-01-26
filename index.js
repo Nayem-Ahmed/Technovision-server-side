@@ -34,7 +34,6 @@ const logger = async(req,res,next)=>{
 
 const verifyToken = async (req, res, next) => {
   const token = req?.cookies?.token
-  console.log(token)
   if (!token) {
     return res.status(401).send({ message: 'unauthorized access' })
   }
@@ -116,7 +115,7 @@ async function run() {
     })
 
     // Get all products
-    app.get('/products', async (req, res) => {
+    app.get('/products', verifyToken, async (req, res) => {
       const result = await productsCollection.find().toArray()
       res.send(result)
     })
@@ -136,7 +135,7 @@ async function run() {
     })
 
     // Get add cart data
-    app.get('/addcart/:email', logger, async (req, res) => {
+    app.get('/addcart/:email',  async (req, res) => {
       const email = req.params.email;
       const query = { email: email }
       const result = await addCartCollection.find(query).toArray()

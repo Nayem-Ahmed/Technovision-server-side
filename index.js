@@ -56,9 +56,8 @@ async function run() {
     const addCartCollection = client.db('Technovission').collection('addCart')
 
     // JWT
-    app.post('/jwt' ,async(req,res)=>{
+    app.post('/jwt' ,async (req,res)=>{
       const user = req.body
-      console.log(user);
       const token = jwt.sign(user,process.env.ACCESS_TOKEN,{expiresIn:'1h'})
       res
       .cookie('token',token,{
@@ -115,7 +114,7 @@ async function run() {
     })
 
     // Get all products
-    app.get('/products', verifyToken, async (req, res) => {
+    app.get('/products', async (req, res) => {
       const result = await productsCollection.find().toArray()
       res.send(result)
     })
